@@ -19,11 +19,10 @@ def install_user_plugin(plugin_file):
     plugin = pathlib.Path(plugin_file).absolute()
     if not plugin.exists():
         raise FileExistsError(plugin_file)
-    
+
     module_name = plugin.stem
 
     fp, path, desc = imp.find_module(module_name, [str(plugin.parent)])
-    print(f"{module_name=} {fp=} {path=}, {desc=}")
     imp.load_module(module_name, fp, path, desc)
 
 
@@ -39,18 +38,15 @@ class PluginMounter(type):
     def __init__(cls, name, bases, attrs):
         """Called when a PluginBase derived class is imported."""
 
-        print(f"{__file__}::{cls}")
         if not hasattr(cls, 'plugins'):
             # Called when the metaclass is first instantiated
             cls.plugins = []
         else:
             # Called when a plugin class is imported
-            print(f"{__file__}::{cls} - enrolling ...")
             cls._enroll(cls)
 
     def _enroll(cls, plugin):
         """Add the plugin to the plugin list and perform any registration logic"""
-        print(f"{cls.__class__.__name__}.register {plugin}.")
 
         # create a plugin instance and store it
         instance = plugin()
